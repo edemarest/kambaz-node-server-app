@@ -12,11 +12,22 @@ import Lab5 from "./Lab5/index.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://a5--kambaz-react-web-app-by-ella-demarest.netlify.app"
+];
+
 app.use(
   cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    origin: process.env.NETLIFY_URL || "http://localhost:5173",
-  }),
+  })
 );
 
 const sessionOptions = {
@@ -33,6 +44,11 @@ if (process.env.NODE_ENV !== "development") {
   };
 }
 app.use(session(sessionOptions));
+
+app.use((req, res, next) => {
+  console.log("SESSION:", req.session);
+  next();
+});
 
 app.use(express.json());
 
