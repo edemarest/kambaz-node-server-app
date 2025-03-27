@@ -1,32 +1,48 @@
-import usersData from "../Database/users.js";
+import model from "./model.js";
 import { v4 as uuidv4 } from "uuid";
-
-let users = [...usersData];
 
 export const createUser = (user) => {
   const newUser = { ...user, _id: uuidv4() };
-  users = [...users, newUser];
-  return newUser;
+  return model.create(newUser);
+}
+
+export const findAll = () => model.find();
+
+export const findUserById = (userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error("Invalid ObjectId format");
+  }
+  return model.findById(userId).then((result) => {
+    return result;
+  }).catch((error) => {
+    throw error;
+  });
 };
-
-export const findAllUsers = () => users;
-
-export const findUserById = (userId) =>
-  users.find((user) => user._id === userId);
 
 export const findUserByUsername = (username) =>
-  users.find((user) => user.username === username);
+  model.findOne({ username: username });
 
 export const findUserByCredentials = (username, password) =>
-  users.find(
-    (user) => user.username === username && user.password === password,
-  );
+  model.findOne({ username, password });
 
-export const updateUser = (userId, updates) => {
-  users = users.map((u) => (u._id === userId ? { ...u, ...updates } : u));
-  return findUserById(userId);
-};
+export const updateUser = (userId, user) => model.updateOne({ _id: userId }, { $set: user });
+
+export const findUsersByRole = (role) => model.find({ role: role }); 
 
 export const deleteUser = (userId) => {
-  users = users.filter((u) => u._id !== userId);
+  return model.deleteOne({ _id: userId })
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      throw error;
+    });
 };
+
+export const findUsersByPartialName = (partialName) => {
+  const regex = new RegExp(partialName, "i");
+  return model.find({
+    $or: [{ firstName: { $regex: regex } }, { lastName: { $regex: regex } }],
+  });
+};
+
