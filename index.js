@@ -13,11 +13,13 @@ import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
 
 const app = express();
+
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://a6--kambaz-react-web-app-by-ella-demarest.netlify.app"
+  process.env.NETLIFY_URL
 ];
-const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
+
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING;
 mongoose.connect(CONNECTION_STRING);
 
 app.options("*", cors({
@@ -47,7 +49,7 @@ app.set("trust proxy", 1);
 
 const isDev = process.env.NODE_ENV === "development";
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "kambaz-secret",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
