@@ -20,18 +20,16 @@ app.use(
 );
 
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "kambaz-secret",
-  resave: false,
-  saveUninitialized: false,
-};
-if (process.env.NODE_ENV !== "development") {
-  sessionOptions.proxy = true;
-  sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    domain: process.env.NODE_SERVER_DOMAIN,
+    secret: process.env.SESSION_SECRET || "kambaz-secret",
+    resave: false,
+    saveUninitialized: false,
+    proxy: true,
+    cookie: {
+      sameSite: "none",
+      secure: true
+    }
   };
-}
+  
 app.use(session(sessionOptions));
 
 app.use(express.json());
