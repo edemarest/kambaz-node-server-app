@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import session from "express-session";
 import "dotenv/config.js";
@@ -12,12 +13,23 @@ import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
 
 const app = express();
-
 const allowedOrigins = [
   "http://localhost:5173",
   "https://a5--kambaz-react-web-app-by-ella-demarest.netlify.app"
 ];
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
+mongoose.connect(CONNECTION_STRING);
 
+app.options("*", cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -33,28 +45,24 @@ app.use(
 
 app.set("trust proxy", 1);
 
+const isDev = process.env.NODE_ENV === "development";
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz-secret",
   resave: false,
   saveUninitialized: false,
   cookie: {
-    sameSite: "none",
-    secure: true,
+    secure: !isDev,                         // secure = false in dev
+    sameSite: isDev ? "lax" : "none",       // lax in dev, none in prod
+    httpOnly: true,
   },
 };
 
-if (process.env.NODE_ENV !== "development") {
+if (!isDev) {
   sessionOptions.proxy = true;
   sessionOptions.cookie.domain = ".onrender.com";
 }
 
 app.use(session(sessionOptions));
-
-app.use((req, res, next) => {
-  console.log("SESSION:", req.session);
-  next();
-});
-
 app.use(express.json());
 
 UserRoutes(app);

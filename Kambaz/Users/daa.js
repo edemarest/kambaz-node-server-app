@@ -6,7 +6,7 @@ export const createUser = (user) => {
   users = [...users, newUser];
   return newUser;
 };
-export const findAllUsers = () => users;
+export const findAll = () => users;
 export const findUserById = (userId) =>
   users.find((user) => user._id === userId);
 export const findUserByUsername = (username) =>

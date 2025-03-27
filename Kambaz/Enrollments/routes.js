@@ -3,7 +3,6 @@ import * as dao from "./dao.js";
 export default function EnrollmentsRoutes(app) {
   app.post("/api/courses/:courseId/enroll", (req, res) => {
       const currentUser = req.session.currentUser;
-      console.log("SESSION AT ENROLL:", req.session);
     if (!currentUser) {
       return res.status(403).json({ message: "Not logged in" });
     }
