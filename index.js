@@ -15,7 +15,7 @@ import Lab5 from "./Lab5/index.js";
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://a5--kambaz-react-web-app-by-ella-demarest.netlify.app"
+  "https://a6--kambaz-react-web-app-by-ella-demarest.netlify.app"
 ];
 const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
 mongoose.connect(CONNECTION_STRING);
