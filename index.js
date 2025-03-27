@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import session from "express-session";
 import "dotenv/config.js";
+
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
@@ -30,19 +31,23 @@ app.use(
   })
 );
 
+app.set("trust proxy", 1);
+
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz-secret",
   resave: false,
   saveUninitialized: false,
-};
-if (process.env.NODE_ENV !== "development") {
-  sessionOptions.proxy = true;
-  sessionOptions.cookie = {
+  cookie: {
     sameSite: "none",
     secure: true,
-    domain: process.env.NODE_SERVER_DOMAIN,
-  };
+  },
+};
+
+if (process.env.NODE_ENV !== "development") {
+  sessionOptions.proxy = true;
+  sessionOptions.cookie.domain = ".onrender.com";
 }
+
 app.use(session(sessionOptions));
 
 app.use((req, res, next) => {
@@ -62,5 +67,5 @@ Hello(app);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
