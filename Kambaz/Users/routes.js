@@ -60,6 +60,7 @@ export default function UserRoutes(app) {
       return;
     }
     req.session["currentUser"] = user;
+    console.log("SESSION AT SIGNIN:", req.session);
     res.json(user);
   };
 
