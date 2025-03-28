@@ -59,8 +59,8 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: !isDev, // secure = false in dev
-    sameSite: isDev ? "lax" : "none", // lax in dev, none in prod
+    secure: !isDev, 
+    sameSite: isDev ? "lax" : "none", 
     httpOnly: true,
   },
 };
