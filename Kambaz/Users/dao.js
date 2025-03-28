@@ -1,48 +1,34 @@
-import model from "./model.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
+import userSchema from "./schema.js";
+import UserModel from "./model.js";
 
-export const createUser = (user) => {
+export const createUser = async (user) => {
   const newUser = { ...user, _id: uuidv4() };
-  return model.create(newUser);
-}
-
-export const findAll = () => model.find();
-
-export const findUserById = (userId) => {
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new Error("Invalid ObjectId format");
-  }
-  return model.findById(userId).then((result) => {
-    return result;
-  }).catch((error) => {
-    throw error;
-  });
+  const created = await UserModel.create(newUser);
+  return created;
 };
 
-export const findUserByUsername = (username) =>
-  model.findOne({ username: username });
-
-export const findUserByCredentials = (username, password) =>
-  model.findOne({ username, password });
-
-export const updateUser = (userId, user) => model.updateOne({ _id: userId }, { $set: user });
-
-export const findUsersByRole = (role) => model.find({ role: role }); 
-
-export const deleteUser = (userId) => {
-  return model.deleteOne({ _id: userId })
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      throw error;
-    });
+export const findAll = async () => {
+  return await UserModel.find();
 };
 
-export const findUsersByPartialName = (partialName) => {
-  const regex = new RegExp(partialName, "i");
-  return model.find({
-    $or: [{ firstName: { $regex: regex } }, { lastName: { $regex: regex } }],
-  });
+export const findUserById = async (userId) => {
+  return await UserModel.findById(userId);
 };
 
+export const findUserByUsername = async (username) => {
+  return await UserModel.findOne({ username });
+};
+
+export const findUserByCredentials = async (username, password) => {
+  return await UserModel.findOne({ username, password });
+};
+
+export const updateUser = async (userId, user) => {
+  return await UserModel.updateOne({ _id: userId }, { $set: user });
+};
+
+export const deleteUser = async (userId) => {
+  return await UserModel.deleteOne({ _id: userId });
+};

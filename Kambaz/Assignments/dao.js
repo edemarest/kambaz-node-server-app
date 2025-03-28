@@ -1,34 +1,43 @@
-import assignmentsData from "../Database/assignments.js";
+import model from "./model.js";
 import { v4 as uuidv4 } from "uuid";
 
-let assignments = [...assignmentsData];
-
-export const findAssignmentsForCourse = (courseId) => {
-  return assignments.filter((a) => a.course === courseId);
+export const findAssignmentsForCourse = async (courseId) => {
+  try {
+    const assignments = await model.find({ course: courseId });
+    return assignments;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const createAssignment = (courseId, assignment) => {
+export const createAssignment = async (courseId, assignment) => {
   const newAssignment = {
+    ...assignment,
     _id: uuidv4(),
-    title: assignment.title || "Untitled",
-    description: assignment.description || "",
-    points: assignment.points || 100,
-    dueDate: assignment.dueDate || null,
-    availableFrom: assignment.availableFrom || null,
-    availableUntil: assignment.availableUntil || null,
     course: courseId,
   };
-  assignments = [newAssignment, ...assignments];
-  return newAssignment;
+  try {
+    const createdAssignment = await model.create(newAssignment);
+    return createdAssignment;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const updateAssignment = (assignmentId, updates) => {
-  assignments = assignments.map((a) =>
-    a._id === assignmentId ? { ...a, ...updates } : a
-  );
-  return assignments.find((a) => a._id === assignmentId);
+export const updateAssignment = async (assignmentId, updates) => {
+  try {
+    const updatedAssignment = await model.findByIdAndUpdate(assignmentId, updates, { new: true });
+    return updatedAssignment;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const deleteAssignment = (assignmentId) => {
-  assignments = assignments.filter((a) => a._id !== assignmentId);
+export const deleteAssignment = async (assignmentId) => {
+  try {
+    const deletedAssignment = await model.findByIdAndDelete(assignmentId);
+    return deletedAssignment;
+  } catch (error) {
+    throw error;
+  }
 };

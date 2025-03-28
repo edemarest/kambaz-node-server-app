@@ -1,29 +1,47 @@
 import * as dao from "./dao.js";
 
 export default function ModuleRoutes(app) {
-  app.get("/api/courses/:courseId/modules", (req, res) => {
+  app.get("/api/courses/:courseId/modules", async (req, res) => {
     const { courseId } = req.params;
-    const result = dao.findModulesForCourse(courseId);
-    res.json(result);
+    try {
+      const result = await dao.findModulesForCourse(courseId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
-  app.post("/api/courses/:courseId/modules", (req, res) => {
+  app.post("/api/courses/:courseId/modules", async (req, res) => {
     const { courseId } = req.params;
     const module = req.body;
-    const newModule = dao.createModule(courseId, module);
-    res.json(newModule);
+    try {
+      const newModule = await dao.createModule(courseId, module);
+      res.json(newModule);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
-  app.delete("/api/modules/:moduleId", (req, res) => {
+  app.delete("/api/modules/:moduleId", async (req, res) => {
     const { moduleId } = req.params;
-    dao.deleteModule(moduleId);
-    res.sendStatus(200);
+    try {
+      await dao.deleteModule(moduleId);
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
-  app.put("/api/modules/:moduleId", (req, res) => {
+  app.put("/api/modules/:moduleId", async (req, res) => {
     const { moduleId } = req.params;
     const updates = req.body;
-    const updatedModule = dao.updateModule(moduleId, updates);
-    res.json(updatedModule);
+    try {
+      const updatedModule = await dao.updateModule(moduleId, updates);
+      res.json(updatedModule);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   });
 }
+
+

@@ -20,7 +20,13 @@ const allowedOrigins = [
 ];
 
 const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING;
-mongoose.connect(CONNECTION_STRING);
+mongoose.connect(CONNECTION_STRING)
+  .then(() => console.log("Connected to MongoDB:", CONNECTION_STRING))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+  });
+
 
 app.options("*", cors({
   origin: function (origin, callback) {

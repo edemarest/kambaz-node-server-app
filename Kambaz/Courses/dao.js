@@ -1,36 +1,45 @@
-import coursesData from "../Database/courses.js";
-import enrollmentsData from "../Database/enrollments.js";
+import model from "./model.js";
+import * as enrollmentsDao from "../Enrollments/dao.js";
 import { v4 as uuidv4 } from "uuid";
 
-let courses = [...coursesData];
-let enrollments = [...enrollmentsData];
 
-export const findAllCourses = () => courses;
+export function findAllCourses() {
+  return model.find();
+}
 
-export const findCoursesForEnrolledUser = (userId) => {
-  const courseIds = enrollments
-    .filter((e) => e.user === userId)
-    .map((e) => e.course);
-  return courses.filter((c) => courseIds.includes(c._id));
+export const findCoursesForEnrolledUser = async (userId) => {
+  const enrollments = await enrollmentsDao.findEnrollmentsByUser(userId); 
+  const courseIds = enrollments.map((e) => e.course);
+  return model.find({ _id: { $in: courseIds } });
 };
 
-export const createCourse = (course) => {
+export function createCourse(course) {
   const newCourse = { ...course, _id: uuidv4() };
-  courses = [...courses, newCourse];
-  return newCourse;
+  return model.create(newCourse);
+}
+
+export function deleteCourse(courseId) {
+  return model.deleteOne({ _id: courseId });
+}
+
+export const updateCourse = async (courseId, updates) => {
+  await model.updateOne({ _id: courseId }, updates);
+  return model.findOne({ _id: courseId });
 };
 
-export const deleteCourse = (courseId) => {
-  courses = courses.filter((c) => c._id !== courseId);
+export const getCourses = () => model.find();
+export const getEnrollments = () => model.findEnrollments();
+export const setEnrollments = async (updated) => {
+  await model.updateEnrollments(updated);
 };
 
-export const updateCourse = (courseId, updates) => {
-  courses = courses.map((c) => (c._id === courseId ? { ...c, ...updates } : c));
-  return courses.find((c) => c._id === courseId);
-};
 
-export const getCourses = () => courses;
-export const getEnrollments = () => enrollments;
-export const setEnrollments = (updated) => {
-  enrollments = updated;
+export const findUsersByIds = async (userIds) => {
+  try {
+    const ids = userIds.map((u) => (typeof u === "object" ? u._id : u));
+    const users = await model.find({ _id: { $in: ids } });
+    return users;
+  } catch (err) {
+    throw new Error("Failed to fetch users by IDs.");
+  }
 };
