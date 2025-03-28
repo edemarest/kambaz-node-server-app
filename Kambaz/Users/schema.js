@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     _id: String,
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -17,6 +18,6 @@ const userSchema = new mongoose.Schema({
     lastActivity: Date,
     totalActivity: String,
   },
-  { collection: "users" }
+  { collection: "users" },
 );
 export default userSchema;

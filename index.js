@@ -14,30 +14,30 @@ import Lab5 from "./Lab5/index.js";
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.NETLIFY_URL
-];
+const allowedOrigins = ["http://localhost:5173", process.env.NETLIFY_URL];
 
 const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING;
-mongoose.connect(CONNECTION_STRING)
+mongoose
+  .connect(CONNECTION_STRING)
   .then(() => console.log("Connected to MongoDB:", CONNECTION_STRING))
   .catch((err) => {
     console.error("MongoDB connection error:", err.message);
     process.exit(1);
   });
 
-
-app.options("*", cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-}));
+app.options(
+  "*",
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -48,7 +48,7 @@ app.use(
       }
     },
     credentials: true,
-  })
+  }),
 );
 
 app.set("trust proxy", 1);
@@ -59,8 +59,8 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: !isDev,                         // secure = false in dev
-    sameSite: isDev ? "lax" : "none",       // lax in dev, none in prod
+    secure: !isDev, // secure = false in dev
+    sameSite: isDev ? "lax" : "none", // lax in dev, none in prod
     httpOnly: true,
   },
 };

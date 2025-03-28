@@ -23,4 +23,3 @@ export const updateModule = async (moduleId, updates) => {
   await model.updateOne({ _id: moduleId }, updates);
   return await model.findById(moduleId);
 };
-

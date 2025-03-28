@@ -44,27 +44,29 @@ export default function UserRoutes(app) {
     const currentUser = req.session["currentUser"];
     const userId = req.params.userId;
     const updates = req.body;
-    
+
     if (
       !currentUser ||
       (currentUser._id !== userId && currentUser.role !== "ADMIN")
     ) {
-      return res.status(401).json({ message: "Not authorized to update this user" });
+      return res
+        .status(401)
+        .json({ message: "Not authorized to update this user" });
     }
-    
+
     try {
       await dao.updateUser(userId, updates);
       const updatedUser = await dao.findUserById(userId);
-    
+
       if (currentUser._id === userId) {
-      req.session["currentUser"] = updatedUser;
+        req.session["currentUser"] = updatedUser;
       }
-    
+
       res.json(updatedUser);
     } catch (error) {
       res.status(500).json({ message: "Failed to update user" });
     }
-    };
+  };
 
   const signup = async (req, res) => {
     const existing = await dao.findUserByUsername(req.body.username);
@@ -114,7 +116,9 @@ export default function UserRoutes(app) {
       res.status(403).json({ message: "Not logged in" });
       return;
     }
-    const courses = await coursesDao.findCoursesForEnrolledUser(currentUser._id);
+    const courses = await coursesDao.findCoursesForEnrolledUser(
+      currentUser._id,
+    );
     res.json(courses);
   };
 

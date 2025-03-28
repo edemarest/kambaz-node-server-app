@@ -26,7 +26,11 @@ export const createAssignment = async (courseId, assignment) => {
 
 export const updateAssignment = async (assignmentId, updates) => {
   try {
-    const updatedAssignment = await model.findByIdAndUpdate(assignmentId, updates, { new: true });
+    const updatedAssignment = await model.findByIdAndUpdate(
+      assignmentId,
+      updates,
+      { new: true },
+    );
     return updatedAssignment;
   } catch (error) {
     throw error;

@@ -2,13 +2,12 @@ import model from "./model.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 import { v4 as uuidv4 } from "uuid";
 
-
 export function findAllCourses() {
   return model.find();
 }
 
 export const findCoursesForEnrolledUser = async (userId) => {
-  const enrollments = await enrollmentsDao.findEnrollmentsByUser(userId); 
+  const enrollments = await enrollmentsDao.findEnrollmentsByUser(userId);
   const courseIds = enrollments.map((e) => e.course);
   return model.find({ _id: { $in: courseIds } });
 };
@@ -32,7 +31,6 @@ export const getEnrollments = () => model.findEnrollments();
 export const setEnrollments = async (updated) => {
   await model.updateEnrollments(updated);
 };
-
 
 export const findUsersByIds = async (userIds) => {
   try {

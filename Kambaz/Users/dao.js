@@ -32,3 +32,14 @@ export const updateUser = async (userId, user) => {
 export const deleteUser = async (userId) => {
   return await UserModel.deleteOne({ _id: userId });
 };
+
+export const findUsersByRole = async (role) => {
+  return await UserModel.find({ role });
+};
+
+export const findUsersByPartialName = async (name) => {
+  const regex = new RegExp(name, "i");
+  return await UserModel.find({
+    $or: [{ firstName: { $regex: regex } }, { lastName: { $regex: regex } }],
+  });
+};
