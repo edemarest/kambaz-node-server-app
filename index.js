@@ -37,8 +37,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-app.use(cors(corsOptions));
 app.set("trust proxy", 1);
 
 const isDev = process.env.NODE_ENV === "development";
