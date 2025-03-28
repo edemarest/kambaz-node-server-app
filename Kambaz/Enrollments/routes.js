@@ -50,7 +50,7 @@ export default function EnrollmentsRoutes(app) {
 
   const getUserEnrollments = async (req, res) => {
     const currentUser = req.session.currentUser;
-    console.log("Session after login:", req.session);
+    console.log("Session after enrollments:", req.session);
     if (!currentUser) {
       return res.status(403).json({ message: "Not logged in" });
     }

@@ -25,32 +25,20 @@ mongoose
     process.exit(1);
   });
 
-app.options(
-  "*",
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  }),
-);
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  }),
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
+
+app.use(cors(corsOptions));
 app.set("trust proxy", 1);
 
 const isDev = process.env.NODE_ENV === "development";
@@ -59,15 +47,14 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: !isDev, 
-    sameSite: isDev ? "lax" : "none", 
+    secure: !isDev,
+    sameSite: isDev ? "lax" : "none",
     httpOnly: true,
   },
 };
 
 if (!isDev) {
   sessionOptions.proxy = true;
-  sessionOptions.cookie.domain = ".onrender.com";
 }
 
 app.use(session(sessionOptions));
